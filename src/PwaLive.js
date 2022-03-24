@@ -1,7 +1,10 @@
 import { LitElement, html, css } from "lit";
+import { installRouter } from "pwa-helpers";
+
 import "./views/view-about";
 import "./views/view-home";
 import "./views/view-contact";
+import "./views/view-map";
 import "dile-tabs/dile-tabs";
 import "dile-pages/dile-pages";
 
@@ -20,75 +23,71 @@ export class PwaLive extends LitElement {
         font-weight: 300;
         font-family: Pacifico, cursive;
       }
-      /* .page {
-        display: none;
-      }
-      .page[active] {
-        display: block;
-      } */
     `;
   }
 
   static get properties() {
     return {
-      selected: { type: String },
+      page: { type: String },
     };
   }
 
   constructor() {
     super();
-    this.selected = "home";
+    this.page = "home";
+
+    installRouter((location) => this.handleNavigation(location.pathname));
+    this.addEventListener("navigate", (e) => this.navigate(e.detail));
   }
 
   render() {
-    return html` <h1 class="title">My App</h1>
-      <!-- <nav>
-        <a href="#" @click="${this.go}" name="home">Home</a>
-        <a href="#" @click="${this.go}" name="about">About</a>
-        <a href="#" @click="${this.go}" name="contact">Contact</a>
-      </nav> -->
+    return html`
+      <h1 class="title">My App</h1>
+      <!-- <a href="/home">Home</a>
+      <a href="/about">About</a>
+      <a href="/contact">Contacto</a>
+      <a href="/map">Mapa</a> -->
       <dile-tabs
-        selected="${this.selected}"
+        selected="${this.page}"
         attrForSelected="name"
         @dile-tabs-selected-changed="${this.selectedChanged}"
       >
         <dile-tab name="home">Home</dile-tab>
         <dile-tab name="about">About</dile-tab>
         <dile-tab name="contact">Contact</dile-tab>
+        <dile-tab name="map">Mapa</dile-tab>
       </dile-tabs>
-      <dile-pages selected="${this.selected}" attrForSelected="name">
-        <!-- <view-home
-          class="page"
+      <dile-pages selected="${this.page}" attrForSelected="name">
+        <view-home
           texto="algo"
-          ?active="${this.selected === "home"}"
+          name="home"
+          ?active="${this.page === "home"}"
         ></view-home>
         <view-about
-          class="page"
-          ?active="${this.selected === "about"}"
-        ></view-about>
-        <view-contact
-          class="page"
-          ?active="${this.selected === "contact"}"
-        ></view-contact> -->
-        <!-- Dejamos el active porque así nos ahorramos ciclos de cpu en el renderizado aunque con dile-pages no es necesarios -->
-        <view-home texto="algo" name="home"></view-home>
-        <view-about
           name="about"
-          ?active="${this.selected === "about"}"
+          ?active="${this.page === "about"}"
         ></view-about>
         <view-contact
           name="contact"
-          ?active="${this.selected === "contact"}"
+          ?active="${this.page === "contact"}"
         ></view-contact>
-      </dile-pages>`;
+        <view-map name="map" ?active="${this.page === "map"}"></view-map>
+      </dile-pages>
+      <button @click="${() => this.navigate("map")}">Ir al mapa</button>
+    `;
   }
 
   selectedChanged(e) {
-    this.selected = e.detail;
+    this.page = e.detail;
+    this.navigate(page);
   }
 
-  // go(e) {
-  //   e.preventDefault();
-  //   this.selected = e.target.getAttribute("name");
-  // }
+  handleNavigation(pathname) {
+    this.page = pathname === "/" ? "home" : pathname.slice(1);
+  }
+
+  navigate(page) {
+    window.history.pushState({}, "", "/" + page);
+    this.handleNavigation(window.location.pathname);
+  }
 }
