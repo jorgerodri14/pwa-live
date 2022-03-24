@@ -1,7 +1,7 @@
 import { LitElement, html, css } from "lit-element";
 import { PageViewElement } from "./page-view-element";
 
-class ViewHome extends PageViewElement {
+class ViewHome extends LitElement {
   static get styles() {
     return css`
       :host {

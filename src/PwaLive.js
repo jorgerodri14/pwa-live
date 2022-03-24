@@ -2,6 +2,8 @@ import { LitElement, html, css } from "lit";
 import "./views/view-about";
 import "./views/view-home";
 import "./views/view-contact";
+import "dile-tabs/dile-tabs";
+import "dile-pages/dile-pages";
 
 export class PwaLive extends LitElement {
   static get styles() {
@@ -9,18 +11,21 @@ export class PwaLive extends LitElement {
       :host {
         display: block;
         padding: 15px;
+        --dile-tab-background-color: transparent;
+        --dile-tab-select-background-color: transparent;
+        --dile-tab-select-text-color: #10200;
       }
       .title {
         color: red;
         font-weight: 300;
         font-family: Pacifico, cursive;
       }
-      .page {
+      /* .page {
         display: none;
       }
       .page[active] {
         display: block;
-      }
+      } */
     `;
   }
 
@@ -37,13 +42,22 @@ export class PwaLive extends LitElement {
 
   render() {
     return html` <h1 class="title">My App</h1>
-      <nav>
+      <!-- <nav>
         <a href="#" @click="${this.go}" name="home">Home</a>
         <a href="#" @click="${this.go}" name="about">About</a>
         <a href="#" @click="${this.go}" name="contact">Contact</a>
-      </nav>
-      <main>
-        <view-home
+      </nav> -->
+      <dile-tabs
+        selected="${this.selected}"
+        attrForSelected="name"
+        @dile-tabs-selected-changed="${this.selectedChanged}"
+      >
+        <dile-tab name="home">Home</dile-tab>
+        <dile-tab name="about">About</dile-tab>
+        <dile-tab name="contact">Contact</dile-tab>
+      </dile-tabs>
+      <dile-pages selected="${this.selected}" attrForSelected="name">
+        <!-- <view-home
           class="page"
           texto="algo"
           ?active="${this.selected === "home"}"
@@ -55,12 +69,26 @@ export class PwaLive extends LitElement {
         <view-contact
           class="page"
           ?active="${this.selected === "contact"}"
+        ></view-contact> -->
+        <!-- Dejamos el active porque así nos ahorramos ciclos de cpu en el renderizado aunque con dile-pages no es necesarios -->
+        <view-home texto="algo" name="home"></view-home>
+        <view-about
+          name="about"
+          ?active="${this.selected === "about"}"
+        ></view-about>
+        <view-contact
+          name="contact"
+          ?active="${this.selected === "contact"}"
         ></view-contact>
-      </main>`;
+      </dile-pages>`;
   }
 
-  go(e) {
-    e.preventDefault();
-    this.selected = e.target.getAttribute("name");
+  selectedChanged(e) {
+    this.selected = e.detail;
   }
+
+  // go(e) {
+  //   e.preventDefault();
+  //   this.selected = e.target.getAttribute("name");
+  // }
 }
