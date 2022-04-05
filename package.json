@@ -6,7 +6,7 @@
   "version": "0.0.0",
   "scripts": {
     "analyze": "cem analyze --litelement",
-    "start": "web-dev-server"
+    "start": "web-dev-server --app-index index.html"
   },
   "dependencies": {
     "dile-pages": "^1.1.3",

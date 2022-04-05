@@ -1,4 +1,5 @@
 import { css, html } from "lit-element";
+import customEvents from "../utils/custom-events";
 import { PageViewElement } from "./page-view-element";
 
 class ViewMap extends PageViewElement {
@@ -36,14 +37,7 @@ class ViewMap extends PageViewElement {
 
   selectedChanged(e) {
     const page = e.target.value;
-    this.dispatchEvent(
-      new CustomEvent("navigate", {
-        bubbles: true,
-        composed: true,
-        detail: page,
-      })
-    );
-    console.log(e.target.value);
+    this.dispatchEvent(customEvents('navigate', page))
   }
 }
 

@@ -21,6 +21,7 @@ class ViewHome extends PageViewElement {
       <h2>Home</h2>
       <p>Esto es la home!</p>
       <input type="text" value="${this.texto}" />
+      <a href="/blog/bienvenidos">Ir a la nota de bienvenida</a>
     </div>`;
   }
 }

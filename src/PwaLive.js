@@ -5,8 +5,11 @@ import "./views/view-about";
 import "./views/view-home";
 import "./views/view-contact";
 import "./views/view-map";
+import "./views/view-blog";
+
 import "dile-tabs/dile-tabs";
 import "dile-pages/dile-pages";
+import decodeUrl from "./utils/decodeUrl";
 
 export class PwaLive extends LitElement {
   static get styles() {
@@ -29,6 +32,7 @@ export class PwaLive extends LitElement {
   static get properties() {
     return {
       page: { type: String },
+      segments: { type: Array },
     };
   }
 
@@ -43,11 +47,11 @@ export class PwaLive extends LitElement {
   render() {
     return html`
       <h1 class="title">My App</h1>
-      <!-- <a href="/home">Home</a>
+      <a href="/home">Home</a>
       <a href="/about">About</a>
       <a href="/contact">Contacto</a>
-      <a href="/map">Mapa</a> -->
-      <dile-tabs
+      <a href="/map">Mapa</a>
+      <!-- <dile-tabs
         selected="${this.page}"
         attrForSelected="name"
         @dile-tabs-selected-changed="${this.selectedChanged}"
@@ -56,7 +60,7 @@ export class PwaLive extends LitElement {
         <dile-tab name="about">About</dile-tab>
         <dile-tab name="contact">Contact</dile-tab>
         <dile-tab name="map">Mapa</dile-tab>
-      </dile-tabs>
+      </dile-tabs> -->
       <dile-pages selected="${this.page}" attrForSelected="name">
         <view-home
           texto="algo"
@@ -71,7 +75,8 @@ export class PwaLive extends LitElement {
           name="contact"
           ?active="${this.page === "contact"}"
         ></view-contact>
-        <view-map name="map" ?active="${this.page === "map"}"></view-map>
+        <view-map name="map" ?active="${this.page === "map"}"></view-map>ˆ
+        <view-blog name="blog" ?active="${this.page === "blog"}" .segments="${this.segments}"></view-blog>
       </dile-pages>
       <button @click="${() => this.navigate("map")}">Ir al mapa</button>
     `;
@@ -83,7 +88,9 @@ export class PwaLive extends LitElement {
   }
 
   handleNavigation(pathname) {
-    this.page = pathname === "/" ? "home" : pathname.slice(1);
+    const { page, segments } = decodeUrl(pathname);
+    this.page = page;
+    this.segments = segments;
   }
 
   navigate(page) {
